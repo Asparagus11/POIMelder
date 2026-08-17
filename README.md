@@ -38,8 +38,20 @@ Diese App nutzt aktuell keinen Cloud-Sync. Sie ist Teil einer App-Familie, deren
 
 ## Entwicklung
 
-Diese App wurde größtenteils mit [Kiro CLI](https://kiro.dev) entwickelt.
-Kiro ist vermutlich der einfachste Weg, die App weiterzuentwickeln.
+Diese App wurde größtenteils mit einem Coding-Agenten ([Kiro CLI](https://kiro.dev)) entwickelt.
+
+Wenn du dich nicht mit Android-App-Entwicklung auskennst, ist ein Coding-Agent wie
+[Kiro](https://kiro.dev) (freies Kontingent verfügbar) oder [OpenCode](https://opencode.ai)
+vermutlich die einfachste Art, die App weiterzuentwickeln oder zu bauen.
+
+**Beispiel-Prompt:**
+
+> Schau dir mal dieses Android-App-Projekt an und schaffe die Voraussetzungen für den
+> Bau einer APK-Datei (Android App). Baue mir anschließend die APK-Datei.
+
+Wenn du – genau wie ich – gerne mit europäischen Services arbeitest, lohnt sich ein
+Blick auf [OpenCode](https://opencode.ai) und den französischen LLM-Provider
+[Eden AI](https://www.edenai.co).
 
 ### Build
 
