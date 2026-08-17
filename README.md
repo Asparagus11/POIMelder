@@ -2,6 +2,10 @@
 
 Android-App für Radfahrer und Autofahrer. Verfolgt im Hintergrund den Standort per GPS und meldet per Notification und Sprachansage (TTS), sobald ein Point of Interest einer gewählten Kategorie in den konfigurierbaren Umkreis kommt.
 
+## Download
+
+📥 Die aktuelle APK findest du unter [Releases](../../releases).
+
 ## Screenshots
 
 | | |
