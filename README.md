@@ -10,7 +10,7 @@ Android-App für Radfahrer und Autofahrer. Verfolgt im Hintergrund den Standort 
 
 | | |
 |---|---|
-| ![Screenshot 1](screenshots/screenshot1.png) | ![Screenshot 2](screenshots/screenshot2.png) |
+| ![Screenshot 1](Screenshot_20260825-160621_POIMelder.png) | ![Screenshot 2](Screenshot_20260825-160651_POIMelder.png) |
 
 ## Features
 
