@@ -1,0 +1,63 @@
+name: Release
+
+# Läuft, sobald ein Versions-Tag gepusht wird, z. B.:
+#   git tag v0.20 && git push origin v0.20
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Erlaubt dem Workflow, ein GitHub-Release anzulegen und die APK anzuhängen.
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quellcode auschecken
+        uses: actions/checkout@v4
+
+      - name: JDK 17 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle-Cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Keystore aus Secret wiederherstellen
+        # Der Keystore liegt als base64-Text im Secret KEYSTORE_BASE64 und wird
+        # hier in eine Datei zurueckgeschrieben. Sie existiert nur waehrend des
+        # Laufs auf dem Runner und wird danach mit der VM verworfen.
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "${{ runner.temp }}/release.jks"
+
+      - name: Release-APK bauen (signiert)
+        env:
+          KEYSTORE_FILE: ${{ runner.temp }}/release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleRelease --no-daemon
+
+      - name: APK-Pfad ermitteln
+        id: apk
+        run: |
+          FILE=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          if [ -z "$FILE" ]; then
+            echo "Keine Release-APK gefunden – ist die Signatur-Konfiguration korrekt?" >&2
+            exit 1
+          fi
+          echo "path=$FILE" >> "$GITHUB_OUTPUT"
+          echo "Gefundene APK: $FILE"
+
+      - name: GitHub-Release anlegen und APK anhängen
+        uses: softprops/action-gh-release@v2
+        with:
+          # Der Tag-Name (z. B. v0.20) wird automatisch als Release-Name genutzt.
+          files: ${{ steps.apk.outputs.path }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true

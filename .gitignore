@@ -15,3 +15,7 @@ nextcloud.conf
 build_and_upload.sh
 crash.log
 spec.md
+
+# Release-Keystore niemals committen (kommt auf dem Runner aus Secrets)
+*.jks
+*.keystore

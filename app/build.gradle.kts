@@ -16,19 +16,44 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release-Signatur nur dann, wenn die noetigen Umgebungsvariablen gesetzt sind.
+    // Lokal (Debug/Nextcloud) bleibt alles wie bisher; auf dem GitHub-Runner liefert
+    // der Release-Workflow die vier Variablen aus verschluesselten Secrets. Der
+    // Keystore liegt NIE im Repo.
+    val keystorePath = System.getenv("KEYSTORE_FILE")
+    val hasSigning = keystorePath != null && file(keystorePath).exists()
+
+    signingConfigs {
+        if (hasSigning) {
+            create("release") {
+                storeFile = file(keystorePath!!)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Nur wenn ein Keystore bereitsteht. Sonst bleibt der Release-Build
+            // unsigniert – das faellt beim Installieren auf, statt still mit dem
+            // Debug-Key zu signieren.
+            if (hasSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
     applicationVariants.all {
-        val featureTag = "pastell-theme"
-        val version = "v16"
+        val variant = this
+        val versionNum = variant.versionCode
         outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            output.outputFileName = "poimelder_${featureTag}_${version}.apk"
+            val suffix = if (variant.buildType.name == "release") "_release" else ""
+            output.outputFileName = "poimelder${suffix}_v${versionNum}.apk"
         }
     }
 
